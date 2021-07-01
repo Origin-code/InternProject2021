@@ -1,0 +1,77 @@
+Sub avgCalc()
+
+Dim db As DAO.Database
+Dim snapRst As DAO.Recordset
+Dim SumTotal As Currency
+Dim dayAvgTwenty As Currency
+Dim dayAvgFifty As Currency
+Dim dayAvgTwohundred As Currency
+Dim recordNum As Integer
+Dim finalAverage As Currency
+Dim loopCounter As Integer
+Dim BadAverage As Boolean
+Dim averageNum As Integer
+
+
+Set db = CurrentDb
+Set snapRst = db.OpenRecordset("Average Test", _
+                dbOpenDynaset)
+
+'Master Loop
+For counter = 1 To 3
+    snapRst.MoveFirst
+    SumTotal = 0
+    recordNum = 0
+    finalAverage = 0
+    If counter = 1 Then
+    averageNum = 20
+    ElseIf counter = 2 Then
+    averageNum = 50
+    Else
+    averageNum = 200
+    End If
+    'Main Loop
+    Do While Not snapRst.EOF
+        'Logic for 20 day average
+        SumTotal = snapRst![stkPx]
+        loopCounter = 0
+            Do While (loopCounter < averageNum)
+                snapRst.MoveNext
+                If snapRst.EOF Then
+                    finalAverage = 0
+                    Exit Do
+                End If
+                SumTotal = SumTotal + snapRst![stkPx]
+                loopCounter = loopCounter + 1
+            Loop
+        finalAverage = SumTotal / averageNum
+            If Not snapRst.EOF Then
+                With snapRst
+                    .Edit
+                    If counter = 1 Then
+                        .Fields("20dAvg") = finalAverage
+                    ElseIf counter = 2 Then
+                        .Fields("50dAvg") = finalAverage
+                    Else
+                        .Fields("200dAvg") = finalAverage
+                    End If
+                    .Update
+                    .MoveNext
+                End With
+            End If
+        
+        finalAverage = 0
+        snapRst.MoveFirst
+        recordNum = recordNum + 1
+        snapRst.Move (recordNum)
+    Loop
+Next
+
+'snapRst.MoveLast
+MsgBox "Done"
+                
+snapRst.Close
+db.Close
+
+
+End Sub
