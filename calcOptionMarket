@@ -1,0 +1,46 @@
+Sub calcOptionMarket()
+
+Dim db As DAO.Database
+Dim snapRst As DAO.Recordset
+Dim startDate As Date
+Dim netCallPrem As Currency
+Dim strikePrice As Integer
+Dim expirDate As Date
+
+'strikePrice and expirDate are values to be assigned after finding the call 30 days out. They are the strike and expire date for that call option
+
+Set db = CurrentDb
+
+'Dim the values for market conditions
+Dim dayAvgTwenty As Currency
+Dim dayAvgFifty As Currency
+Dim dayAvgTwoHundred As Currency
+
+'Statements to find the market conditions and the delta call to sell
+
+'Find the place where the 50 crosses the 200 and start
+snapRst.MoveFirst
+'A loop that will run until it finds where 50dAvg > 200dAvg
+Do Until snapRst = snapRst.EOF
+
+
+
+
+'If the 50 is less than 200 then do nothing
+
+'If the 50 > 200 AND 50 > 20 then sell 15 delta 30 days out
+'Use startDate to record the "trade_date" chosen and look 30 days out from there for a 15 delta
+
+'If the 50 > 200 AND 50 < 20 then sell 30 delta 30 days out
+'Use startDate to record the "trade_date" chosen and look 30 days out from there for a 30 delta
+
+
+'Look at the main table for 30 days from the start date, round down to the closest date if the 30 days out date DNE
+'Look at the main table for delta value according to the inequality above. Take the first call option where delta drops below .30 and sell it for cBidPx
+
+
+'Go forward to where the expirDate of the sold option is now the trade_date, buy back the same call (find it using the strike I think) for the cAskPrice which will either be 0 or a negative number that deducts from the Net Call Premium
+
+
+
+End Sub
