@@ -1,0 +1,22 @@
+Sub AddTransaction(vTicker As String, vSellDate As Date, vBuyDate As Date, vSellPrice As Double, vBuyPrice As Double, vNoAction As Boolean)
+Dim db As DAO.Database
+Dim snapRst As DAO.Recordset
+
+Set db = CurrentDb
+Set snapRst = db.OpenRecordset("TransactionTable", _
+                dbOpenDynaset)
+
+With snapRst
+    .AddNew
+        .Fields("Ticker") = vTicker
+        .Fields("Sell Date") = vSellDate
+        .Fields("Buy Date") = vBuyDate
+        .Fields("Sell Price") = vSellPrice
+        .Fields("Buy Price") = vBuyPrice
+        .Fields("No Action") = vNoAction
+    .Update
+End With
+'MsgBox (vSellDate & vBuyDate & vSellPrice & vBuyPrice & vNoAction)
+snapRst.Close
+db.Close
+End Sub
