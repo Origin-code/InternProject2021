@@ -32,3 +32,4 @@ End Sub
 
 '12/5/2018 .258459
 'Add 2 columns to transaction table recording the delta chosen below the .3 and the difference between the two
+'
