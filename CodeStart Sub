@@ -1,0 +1,64 @@
+'ADD THESE AS GLOBAL DIMS:
+Dim startDate As Date
+Dim endDate As Date
+Dim DaysOut As Integer
+Dim Ticker As String
+Dim deltaOne As Double
+Dim deltaTwo As Double
+
+'THIS IS WHERE CODE STARTS:
+
+Sub CodeStart()
+
+Dim db As DAO.Database
+Dim snapRst As DAO.Recordset
+Dim currentDate As Date
+Dim dbTwo As DAO.Database
+Dim snapRstTwo As DAO.Recordset
+
+deltaOne = 0.15
+deltaTwo = 0.3
+
+Ticker = "SPY"
+
+startDate = InputBox("Enter Start Date")
+endDate = InputBox("Enter End Date")
+
+Set db = CurrentDb
+Set snapRst = db.OpenRecordset("Average Table", _
+                dbOpenDynaset)
+    
+Set dbTwo = CurrentDb
+Set snapRstTwo = db.OpenRecordset("FinalOutput", _
+                dbOpenDynaset)
+
+'Find the start date in the average table and initialize the position
+snapRst.FindFirst "[trade_date] = #" & startDate & "#"
+DoCmd.RunSQL "DELETE * FROM TransactionTable"
+
+'Going to be in a loop
+For Counter = 1 To 5
+    'MsgBox (snapRst![trade_date])
+    currentDate = snapRst![trade_date]
+
+    If snapRst![50dAvg] < snapRst![200dAvg] Then
+        MsgBox ("No Action")
+        Call AddTransaction(Ticker, currentDate, currentDate, 0, 0, True)
+    
+    ElseIf (snapRst![20dAvg] < snapRst![50dAvg]) And (snapRst![50dAvg] > snapRst![200dAvg]) Then
+    '15 delta calls 30 days out
+        MsgBox ("Type 2")
+        Call FindCallToSell(Ticker, currentDate, deltaOne)
+    ElseIf (snapRst![20dAvg] > snapRst![50dAvg]) And (snapRst![50dAvg] > snapRst![200dAvg]) Then
+    '30 delta calls 30 days out
+        MsgBox ("Type 3")
+        Call FindCallToSell(Ticker, currentDate, deltaTwo)
+    End If
+    snapRst.MoveNext
+Next
+
+
+MsgBox "Done"
+snapRst.Close
+db.Close
+End Sub
