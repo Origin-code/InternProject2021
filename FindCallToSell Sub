@@ -1,0 +1,34 @@
+Sub FindCallToSell(vTicker As String, vTradeDate As Date, vDelta As Double)
+Dim db As DAO.Database
+Dim snapRst As DAO.Recordset
+Dim vExpirDate As Date
+Dim FilterRst As DAO.Recordset
+vExpirDate = vTradeDate + 30
+
+Set db = CurrentDb
+Set snapRst = db.OpenRecordset("FinalOutput", _
+                dbOpenDynaset)
+
+snapRst.Filter = "trade_date = " & vTradeDate & " And expirDate = " & vExpirDate
+Set FilterRst = snapRst.OpenRecordset
+
+
+'Will have to find the first SPY or other ticker on that date
+
+Do Until FilterRst.EOF
+MsgBox ("in the loop")
+    If FilterRst![delta] > vDelta Then
+        FilterRst.MoveNext
+        MsgBox ("moving")
+    Else
+        MsgBox ("Found it" & FilterRst![delta])
+    End If
+Loop
+
+
+snapRst.Close
+db.Close
+End Sub
+
+'12/5/2018 .258459
+'Add 2 columns to transaction table recording the delta chosen below the .3 and the difference between the two
